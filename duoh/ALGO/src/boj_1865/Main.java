@@ -12,7 +12,6 @@ public class Main {
 	private static final int INF = Integer.MAX_VALUE;
 
 	private static List<Edge> edges;
-	private static int[] dist;
 	private static int N;
 
 	public static void main(String[] args) throws IOException {
@@ -57,7 +56,7 @@ public class Main {
 	}
 
 	private static boolean bellmanFord() {
-		dist = new int[N + 1];
+		int[] dist = new int[N + 1];
 		Arrays.fill(dist, INF);
 		dist[0] = 0;
 
