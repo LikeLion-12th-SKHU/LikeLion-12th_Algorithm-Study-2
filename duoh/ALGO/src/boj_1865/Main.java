@@ -11,7 +11,7 @@ import java.util.StringTokenizer;
 public class Main {
 	private static final int INF = Integer.MAX_VALUE;
 
-	private static List<int[]>[] graph;
+	private static List<Edge> edges;
 	private static int N;
 
 	public static void main(String[] args) throws IOException {
@@ -25,27 +25,27 @@ public class Main {
 			N = Integer.parseInt(st.nextToken());
 			int M = Integer.parseInt(st.nextToken());
 			int W = Integer.parseInt(st.nextToken());
+			edges = new ArrayList<>();
 
-			graph = new ArrayList[N + 1];
 			for (int i = 1; i <= N; i++) {
-				graph[i] = new ArrayList<>();
+				edges.add(new Edge(0, i, 0));
 			}
 
-			for (int j = 0; j < M; j++) {
+			for (int i = 0; i < M; i++) {
 				st = new StringTokenizer(br.readLine());
 				int S = Integer.parseInt(st.nextToken());
 				int E = Integer.parseInt(st.nextToken());
 				int T = Integer.parseInt(st.nextToken());
-				graph[S].add(new int[] {E, T});
-				graph[E].add(new int[] {S, T});
+				edges.add(new Edge(S, E, T));
+				edges.add(new Edge(E, S, T));
 			}
 
-			for (int j = 0; j < W; j++) {
+			for (int i = 0; i < W; i++) {
 				st = new StringTokenizer(br.readLine());
 				int S = Integer.parseInt(st.nextToken());
 				int E = Integer.parseInt(st.nextToken());
-				int T = Integer.parseInt(st.nextToken()) * -1;
-				graph[S].add(new int[] {E, T});
+				int T = Integer.parseInt(st.nextToken());
+				edges.add(new Edge(S, E, -T));
 			}
 
 			sb.append(bellmanFord() ? "YES" : "NO").append("\n");
@@ -58,38 +58,37 @@ public class Main {
 	private static boolean bellmanFord() {
 		int[] dist = new int[N + 1];
 		Arrays.fill(dist, INF);
+		dist[0] = 0;
 
-		for (int start = 1; start <= N; start++) {
-			dist[start] = 0;
+		for (int i = 1; i < N; i++) {
+			boolean flag = false;
 
-			for (int i = 1; i < N; i++) {
-				boolean flag = false;
-
-				for (int j = 1; j <= N; j++) {
-					if (dist[j] == INF) continue;
-
-					for (int[] edge : graph[j]) {
-						if (dist[edge[0]] > dist[j] + edge[1]) {
-							dist[edge[0]] = dist[j] + edge[1];
-							flag = true;
-						}
-					}
+			for (Edge edge : edges) {
+				if (dist[edge.from] != INF && dist[edge.to] > dist[edge.from] + edge.weight) {
+					dist[edge.to] = dist[edge.from] + edge.weight;
+					flag = true;
 				}
-
-				if (!flag) break;
 			}
 
-			for (int j = 1; j <= N; j++) {
-				if (dist[j] == INF) continue;
+			if (!flag) break;
+		}
 
-				for (int[] edge : graph[j]) {
-					if (dist[edge[0]] > dist[j] + edge[1]) {
-						return true;
-					}
-				}
+		for (Edge edge : edges) {
+			if (dist[edge.from] != INF && dist[edge.to] > dist[edge.from] + edge.weight) {
+				return true;
 			}
 		}
 
 		return false;
+	}
+}
+
+class Edge {
+	int from, to, weight;
+
+	public Edge(int from, int to, int weight) {
+		this.from = from;
+		this.to = to;
+		this.weight = weight;
 	}
 }
