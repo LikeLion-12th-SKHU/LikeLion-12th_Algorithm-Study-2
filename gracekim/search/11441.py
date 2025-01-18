@@ -27,4 +27,4 @@ for i in range(1, n+1):
   
 for _ in range(int(input())):
   i, j = map(int, input().split())
-  sys.stdout.write(str(ans[j] - ans[i = 1]) + "\n")
+  sys.stdout.write(str(ans[j] - ans[i - 1]) + "\n")
